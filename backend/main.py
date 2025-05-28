@@ -4,6 +4,8 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
+client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 app = FastAPI()
 
 app.add_middleware(
@@ -23,7 +25,7 @@ async def suggest_outfits(files: List[UploadFile] = File(...)):
     filenames = ", ".join([file.filename for file in files])
     prompt = f"I uploaded these clothes: {filenames}. Suggest 5 stylish outfits using these pieces for work, casual, and evening settings."
 
-    response = openai.ChatCompletion.create(
+    response = client.chat.completions.create(
         model="gpt-4",
         messages=[
             {"role": "system", "content": "You are a personal stylist AI."},
@@ -31,4 +33,4 @@ async def suggest_outfits(files: List[UploadFile] = File(...)):
         ]
     )
 
-    return {"outfits": response['choices'][0]['message']['content']}
+    return {"outfits": response.choices[0].message.content}
