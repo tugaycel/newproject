@@ -4,8 +4,6 @@ from fastapi import FastAPI, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
 from typing import List
 
-client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
 app = FastAPI()
 
 app.add_middleware(
