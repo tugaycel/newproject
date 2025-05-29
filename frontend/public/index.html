@@ -1,11 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Closet Stylist</title>
-</head>
-<body>
-  <div id="root"></div>
-</body>
-</html>
+// Updated frontend React component to handle collage display
+import React, { useState } from 'react';
+import axios from 'axios';
+
+export default function StylistApp() {
+  const [files, setFiles] = useState([]);
+  const [outfits, setOutfits] = useState('');
+  const [collageImage, setCollageImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleFileChange = (e) => {
+    setFiles(e.target.files);
+  };
+
+  const handleSubmit = async () => {
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('files', files[i]);
+    }
+    setLoading(true);
+    try {
+      const response = await axios.post('https://your-backend-url.onrender.com/suggest', formData);
+      setOutfits(response.data.outfits);
+      setCollageImage(`data:image/jpeg;base64,${response.data.collage_image_base64}`);
+    } catch (error) {
+      setOutfits('Error generating outfits.');
+    }
+    setLoading(false);
+  };
+
+  return (
+    <div className="p-4 max-w-2xl mx-auto">
+      <h1 className="text-2xl font-bold mb-4">Virtual Stylist</h1>
+      <input type="file" multiple accept="image/*" onChange={handleFileChange} className="mb-4" />
+      <button onClick={handleSubmit} className="px-4 py-2 bg-blue-500 text-white rounded">
+        Get Outfit Ideas
+      </button>
+      {loading && <p className="mt-4">Generating outfits...</p>}
+      {collageImage && <img src={collageImage} alt="Clothing Collage" className="mt-4 rounded shadow" />}
+      {outfits && <div className="mt-4 whitespace-pre-wrap bg-gray-100 p-4 rounded">{outfits}</div>}
+    </div>
+  );
+}
