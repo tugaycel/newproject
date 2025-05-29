@@ -19,7 +19,7 @@ export default function StylistApp() {
     }
     setLoading(true);
     try {
-      const response = await axios.post('https://your-backend-url.onrender.com/suggest', formData);
+      const response = await axios.post('https://newproject-i35p.onrender.com/suggest', formData);
       setOutfits(response.data.outfits);
       setCollageImage(`data:image/jpeg;base64,${response.data.collage_image_base64}`);
     } catch (error) {
